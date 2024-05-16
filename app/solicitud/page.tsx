@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'sonner';
 
 import ReCAPTCHA from 'react-google-recaptcha';
-import { FormControl, Input } from '@mui/material';
+import { FormControl, Input, TextField } from '@mui/material';
 
 export default function Page() {
     const router = useRouter();
@@ -15,7 +15,6 @@ export default function Page() {
     const [activeStep, setActiveStep] = useState(0);
     const [title, setTitle] = useState('');
     const [passCaptcha, setPassCaptcha] = useState(false);
-    const [isChecked, setIsChecked] = useState(false);
     const [titleFontSize, setTitleFontSize] = useState(16);
     const [acceptBox, setAcceptBox] = useState<boolean>(false);
 
@@ -47,8 +46,6 @@ export default function Page() {
         setAcceptBox(!acceptBox);
     };
 
-    const handleNextStep = () => {};
-
     const onChange = (value) => {
         // if(captcha.current.getValue())
         setPassCaptcha(true);
@@ -78,9 +75,46 @@ export default function Page() {
                 </div>
                 <div className="mx-10 lg:mx-38">
                     <div className="w-full">
-                        <FormControl>
-                            <Input />
-                        </FormControl>
+                        <div className="w-full flex justify-between mt-2 mb-4">
+                            <div className="w-8/12 mr-2">
+                                <TextField
+                                    fullWidth
+                                    label="Nombre del solicitante"
+                                    variant="outlined"
+                                    required
+                                    size="small"
+                                />
+                            </div>
+                            <div className="w-4/12">
+                                <TextField
+                                    fullWidth
+                                    label="Número de nómina"
+                                    variant="outlined"
+                                    required
+                                    size="small"
+                                />
+                            </div>
+                        </div>
+                        <div className="w-full flex justify-between ">
+                            <div className="w-8/12 mr-2">
+                                <TextField
+                                    fullWidth
+                                    label="Email"
+                                    variant="outlined"
+                                    required
+                                    size="small"
+                                />
+                            </div>
+                            <div className="w-4/12">
+                                <TextField
+                                    fullWidth
+                                    label="Télefono"
+                                    variant="outlined"
+                                    required
+                                    size="small"
+                                />
+                            </div>
+                        </div>
                     </div>
                     <div className="mt-6">
                         <div className="w-full flex flex-col items-center">
