@@ -53,7 +53,7 @@ export default function Page() {
 
     const handleDisplayForm = () => {
         return (
-            <div className="mb-28 px-4 sm:px-44">
+            <div className="mb-28 px-4 sm:px-10">
                 <Toaster position="top-center" richColors closeButton />
                 <div className=" ">
                     <h1 className="text-xl pt-7">
@@ -75,8 +75,8 @@ export default function Page() {
                 </div>
                 <div className="mx-10 lg:mx-38">
                     <div className="w-full">
-                        <div className="w-full flex justify-between mt-2 mb-4">
-                            <div className="w-8/12 mr-2">
+                        <div className="w-full flex flex-col mt-4">
+                            <div className="w-full mb-2">
                                 <TextField
                                     fullWidth
                                     label="Nombre del solicitante"
@@ -85,7 +85,7 @@ export default function Page() {
                                     size="small"
                                 />
                             </div>
-                            <div className="w-4/12">
+                            <div className="w-full mb-2">
                                 <TextField
                                     fullWidth
                                     label="Número de nómina"
@@ -95,8 +95,8 @@ export default function Page() {
                                 />
                             </div>
                         </div>
-                        <div className="w-full flex justify-between ">
-                            <div className="w-8/12 mr-2">
+                        <div className="w-full flex flex-col justify-between ">
+                            <div className="w-full mb-2">
                                 <TextField
                                     fullWidth
                                     label="Email"
@@ -105,7 +105,7 @@ export default function Page() {
                                     size="small"
                                 />
                             </div>
-                            <div className="w-4/12">
+                            <div className="w-full mb-2">
                                 <TextField
                                     fullWidth
                                     label="Télefono"
@@ -118,8 +118,8 @@ export default function Page() {
                     </div>
                     <div className="mt-6">
                         <div className="w-full flex flex-col items-center">
-                            <div className="w-7/12 flex justify-center mb-2">
-                                <div className="w-4 mr-1">
+                            <div className="w-full flex justify-between items-center mb-4">
+                                <div className="w-1/12 mr-1">
                                     <input
                                         type="checkbox"
                                         checked={acceptBox}
@@ -127,7 +127,7 @@ export default function Page() {
                                         className=""
                                     />
                                 </div>
-                                <label className="text-center w-9/12">
+                                <label className="w-11/12 text-left">
                                     Declaro bajo protesta de decir verdad, que
                                     he leído y acepto los Términos y Condiciones
                                     y el Aviso de Privacidad de Municipio de San
@@ -140,7 +140,7 @@ export default function Page() {
                                 onChange={onChange}
                             />
                         </div>
-                        <div className="md:flex md:flex-row justify-center ">
+                        <div className="flex justify-center">
                             <button
                                 className={`${
                                     !passCaptcha ? 'bg-gray-300' : 'bg-black'
