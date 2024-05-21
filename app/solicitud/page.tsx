@@ -8,6 +8,7 @@ import { Toaster, toast } from 'sonner';
 
 import ReCAPTCHA from 'react-google-recaptcha';
 import { FormControl, Input, TextField } from '@mui/material';
+import { CreateRequest } from '@/models/interfaces';
 
 export default function Page() {
     const router = useRouter();
@@ -17,12 +18,47 @@ export default function Page() {
     const [passCaptcha, setPassCaptcha] = useState(false);
     const [titleFontSize, setTitleFontSize] = useState(16);
     const [acceptBox, setAcceptBox] = useState<boolean>(false);
+    const [showErrors, setShowErrors] = useState<boolean>(false);
+    const [form, setForm] = useState<CreateRequest>({
+        name: '',
+        nomina_number: '',
+        email: '',
+        date_request: '',
+        hour_request: '',
+        id_request_status: 1,
+        id_user_created_by: 1,
+        motive_appointment: '',
+        origin_system: 1,
+        phone: '',
+    });
 
     const captcha = useRef(null);
 
     const steps = [
         { title: 'Proporciona tus datos para iniciar una solicitud' },
     ];
+
+    const onChangePhoneInput = (e: ChangeEvent<HTMLInputElement>) => {};
+
+    const onChangeNumberInput = (e: ChangeEvent<HTMLInputElement>) => {};
+
+    const onChangeTextInput = (e: ChangeEvent<HTMLInputElement>) => {
+        setForm({ ...form, [e.currentTarget.name]: e.currentTarget.value });
+    };
+
+    const createSolicitud = () => {
+        if (
+            !passCaptcha &&
+            !acceptBox &&
+            (form.name === '' ||
+                form.nomina_number === '' ||
+                form.email === '' ||
+                form.phone === '')
+        )
+            setShowErrors(true);
+
+        // Empezar con la petición
+    };
 
     useEffect(() => {
         const handleResize = () => {
@@ -53,7 +89,7 @@ export default function Page() {
 
     const handleDisplayForm = () => {
         return (
-            <div className="mb-28 px-4 sm:px-10">
+            <div className="mb-28 px-4 lg:px-40 xl:px-96">
                 <Toaster position="top-center" richColors closeButton />
                 <div className=" ">
                     <h1 className="text-xl pt-7">
@@ -83,6 +119,9 @@ export default function Page() {
                                     variant="outlined"
                                     required
                                     size="small"
+                                    value={form.name}
+                                    name="name"
+                                    onChange={onChangeTextInput}
                                 />
                             </div>
                             <div className="w-full mb-2">
@@ -92,6 +131,9 @@ export default function Page() {
                                     variant="outlined"
                                     required
                                     size="small"
+                                    value={form.nomina_number}
+                                    name="nomina_number"
+                                    onChange={onChangeNumberInput}
                                 />
                             </div>
                         </div>
@@ -103,6 +145,9 @@ export default function Page() {
                                     variant="outlined"
                                     required
                                     size="small"
+                                    value={form.email}
+                                    name="email"
+                                    onChange={onChangeTextInput}
                                 />
                             </div>
                             <div className="w-full mb-2">
@@ -112,6 +157,9 @@ export default function Page() {
                                     variant="outlined"
                                     required
                                     size="small"
+                                    value={form.phone}
+                                    name="phone"
+                                    onChange={onChangePhoneInput}
                                 />
                             </div>
                         </div>
@@ -143,9 +191,12 @@ export default function Page() {
                         <div className="flex justify-center">
                             <button
                                 className={`${
-                                    !passCaptcha ? 'bg-gray-300' : 'bg-black'
+                                    acceptBox && passCaptcha
+                                        ? 'bg-black'
+                                        : 'bg-gray-300'
                                 } shadow-md rounded-3xl text-white p-3 flex items-center justify-center  md:m-10 mt-5 px-10 md:w-2/6`}
                                 disabled={!passCaptcha}
+                                onClick={createSolicitud}
                             >
                                 ENVIAR
                             </button>
