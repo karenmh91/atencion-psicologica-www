@@ -7,12 +7,32 @@ import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'sonner';
 
 import ReCAPTCHA from 'react-google-recaptcha';
-import { FormControl, Input, TextField } from '@mui/material';
+import {
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    FormHelperText,
+    Input,
+    TextField,
+} from '@mui/material';
 import { CreateRequest } from '@/models/interfaces';
+import { Label } from '@headlessui/react/dist/components/label/label';
+import { createRequest } from '@/services/requests.service';
+import useAlertsStore from '@/store/storeAlerts';
+import DialogInfo from '@/components/DialogInfo/DialogInfo';
 
 export default function Page() {
+    /////Store
+    const { setAlert } = useAlertsStore((state) => state);
+    /////
+
     const router = useRouter();
 
+    const [confirmModal, setConfirmModal] = useState<boolean>(false);
+    const [contenidoModal, setContenidoModal] = useState<string>('');
+
+    const [isReqLoading, setIsReqLoading] = useState<boolean>(false);
     const [activeStep, setActiveStep] = useState(0);
     const [title, setTitle] = useState('');
     const [passCaptcha, setPassCaptcha] = useState(false);
@@ -63,18 +83,52 @@ export default function Page() {
         setForm({ ...form, [e.currentTarget.name]: e.currentTarget.value });
     };
 
-    const createSolicitud = () => {
+    const createSolicitud = async () => {
         if (
-            !passCaptcha &&
-            !acceptBox &&
-            (form.name === '' ||
-                form.nomina_number === '' ||
-                form.email === '' ||
-                form.phone === '')
-        )
+            !(acceptBox && passCaptcha) ||
+            form.name === '' ||
+            form.nomina_number === '' ||
+            form.email === '' ||
+            !form.email.includes('@') ||
+            form.phone === ''
+        ) {
             setShowErrors(true);
+            return;
+        }
+        let currDate = new Date();
 
-        // Empezar con la petición
+        let hh = ('0' + currDate.getHours()).slice(-2);
+        let mm = ('0' + currDate.getMinutes()).slice(-2);
+
+        let DD = ('0' + currDate.getDate()).slice(-2);
+        let MM = ('0' + (currDate.getMonth() + 1)).slice(-2);
+        let YYYY = currDate.getFullYear();
+
+        setForm({
+            ...form,
+            hour_request: `${hh}:${mm} `,
+            date_request: `${DD}-${MM}-${YYYY}`,
+        });
+        setIsReqLoading(true);
+        let res = await createRequest(form);
+
+        if (res.status === 200) {
+            setAlert('success', res.message || 'Solicitud creada con exito');
+            setConfirmModal(true);
+            setContenidoModal(
+                `Se ha creado una nueva solicitud con el id ${res.response?.id}`
+            );
+        } else {
+            if (res.status === 500) {
+                setAlert('error', 'Error en el servidor.');
+            } else {
+                setAlert(
+                    'error',
+                    res.message || 'Error al crear la solicitud.'
+                );
+            }
+        }
+        setIsReqLoading(false);
     };
 
     useEffect(() => {
@@ -106,132 +160,162 @@ export default function Page() {
 
     const handleDisplayForm = () => {
         return (
-            <div className="mb-28 px-4 lg:px-40 xl:px-96">
-                <Toaster position="top-center" richColors closeButton />
-                <div className=" ">
-                    <h1 className="text-xl pt-7">
-                        <strong>{title}</strong>
-                    </h1>
-                </div>
+            <>
+                <div className="mb-28 px-4 lg:px-40 xl:px-96">
+                    <Toaster position="top-center" richColors closeButton />
+                    <div className=" ">
+                        <h1 className="text-xl pt-7">
+                            <strong>{title}</strong>
+                        </h1>
+                    </div>
 
-                <div>
-                    <div className=" flex w-full justify-start">
-                        <Stepper
-                            steps={steps}
-                            activeStep={activeStep}
-                            activeColor="black"
-                            defaultColor="#9CA3AF"
-                            completeColor="#9CA3AF"
-                            titleFontSize={titleFontSize}
-                        />
-                    </div>
-                </div>
-                <div className="mx-10 lg:mx-38">
-                    <div className="w-full">
-                        <div className="w-full flex flex-col mt-4">
-                            <div className="w-full mb-2">
-                                <TextField
-                                    error={showErrors && form.name === ''}
-                                    fullWidth
-                                    label="Nombre del solicitante"
-                                    variant="outlined"
-                                    required
-                                    size="small"
-                                    value={form.name}
-                                    name="name"
-                                    onChange={onChangeTextInput}
-                                />
-                            </div>
-                            <div className="w-full mb-2">
-                                <TextField
-                                    error={
-                                        showErrors && form.nomina_number === ''
-                                    }
-                                    fullWidth
-                                    label="Número de nómina"
-                                    variant="outlined"
-                                    required
-                                    size="small"
-                                    value={form.nomina_number}
-                                    name="nomina_number"
-                                    onChange={onChangeNumberInput}
-                                />
-                            </div>
-                        </div>
-                        <div className="w-full flex flex-col justify-between ">
-                            <div className="w-full mb-2">
-                                <TextField
-                                    error={
-                                        showErrors &&
-                                        (form.email === '' ||
-                                            !form.email.includes('@') ||
-                                            !form.email.includes('.'))
-                                    }
-                                    fullWidth
-                                    label="Email"
-                                    variant="outlined"
-                                    required
-                                    size="small"
-                                    value={form.email}
-                                    name="email"
-                                    onChange={onChangeTextInput}
-                                />
-                            </div>
-                            <div className="w-full mb-2">
-                                <TextField
-                                    error={showErrors && form.phone === ''}
-                                    fullWidth
-                                    label="Télefono"
-                                    variant="outlined"
-                                    required
-                                    size="small"
-                                    value={form.phone}
-                                    name="phone"
-                                    onChange={onChangePhoneInput}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mt-6">
-                        <div className="w-full flex flex-col items-center">
-                            <div className="w-full flex justify-between items-center mb-4">
-                                <div className="w-1/12 mr-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={acceptBox}
-                                        onChange={handleAcceptBox}
-                                        className=""
-                                    />
-                                </div>
-                                <label className="w-11/12 text-left">
-                                    Declaro bajo protesta de decir verdad, que
-                                    he leído y acepto los Términos y Condiciones
-                                    y el Aviso de Privacidad de Municipio de San
-                                    Pedro Garza García.
-                                </label>
-                            </div>
-                            <ReCAPTCHA
-                                ref={captcha}
-                                sitekey="6LefMhgpAAAAAGhafQqB6ircUYgMXw_TorkJzi-V"
-                                onChange={onChange}
+                    <div>
+                        <div className=" flex w-full justify-start">
+                            <Stepper
+                                steps={steps}
+                                activeStep={activeStep}
+                                activeColor="black"
+                                defaultColor="#9CA3AF"
+                                completeColor="#9CA3AF"
+                                titleFontSize={titleFontSize}
                             />
                         </div>
-                        <div className="flex justify-center">
-                            <button
-                                className={`${
-                                    acceptBox && passCaptcha
-                                        ? 'bg-black'
-                                        : 'bg-gray-300'
-                                } shadow-md rounded-3xl text-white p-3 flex items-center justify-center  md:m-10 mt-5 px-10 md:w-2/6`}
-                                disabled={!(acceptBox && passCaptcha)}
-                                onClick={createSolicitud}
-                            >
-                                ENVIAR
-                            </button>
+                    </div>
+                    <div className="mx-10 lg:mx-38">
+                        <div className="w-full">
+                            <div className="w-full flex flex-col mt-4">
+                                <div className="w-full mb-2">
+                                    <TextField
+                                        error={showErrors && form.name === ''}
+                                        fullWidth
+                                        label="Nombre del solicitante"
+                                        variant="outlined"
+                                        required
+                                        size="small"
+                                        value={form.name}
+                                        name="name"
+                                        onChange={onChangeTextInput}
+                                    />
+                                </div>
+                                <div className="w-full mb-2">
+                                    <TextField
+                                        error={
+                                            showErrors &&
+                                            form.nomina_number === ''
+                                        }
+                                        fullWidth
+                                        label="Número de nómina"
+                                        variant="outlined"
+                                        required
+                                        size="small"
+                                        value={form.nomina_number}
+                                        name="nomina_number"
+                                        onChange={onChangeNumberInput}
+                                    />
+                                </div>
+                            </div>
+                            <div className="w-full flex flex-col justify-between ">
+                                <div className="w-full mb-2">
+                                    <TextField
+                                        error={
+                                            showErrors &&
+                                            (form.email === '' ||
+                                                !form.email.includes('@'))
+                                        }
+                                        fullWidth
+                                        label="Email"
+                                        variant="outlined"
+                                        required
+                                        size="small"
+                                        value={form.email}
+                                        name="email"
+                                        onChange={onChangeTextInput}
+                                        helperText={
+                                            showErrors &&
+                                            (form.email === '' ||
+                                                !form.email.includes('@'))
+                                                ? 'Debe de ser un email válido.'
+                                                : ''
+                                        }
+                                    />
+                                </div>
+                                <div className="w-full mb-2">
+                                    <TextField
+                                        error={showErrors && form.phone === ''}
+                                        fullWidth
+                                        label="Télefono"
+                                        variant="outlined"
+                                        required
+                                        size="small"
+                                        value={form.phone}
+                                        name="phone"
+                                        onChange={onChangePhoneInput}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-6">
+                            <div className="w-full flex flex-col items-center">
+                                <div className="w-full flex justify-center items-center mb-4">
+                                    <div className="w-full mr-1">
+                                        <FormControl error={!acceptBox}>
+                                            <FormControlLabel
+                                                required
+                                                control={
+                                                    <Checkbox
+                                                        onChange={
+                                                            handleAcceptBox
+                                                        }
+                                                        checked={acceptBox}
+                                                    />
+                                                }
+                                                label={`Declaro bajo protesta de decir verdad, que
+                                            he leído y acepto los Términos y Condiciones
+                                            y el Aviso de Privacidad de Municipio de San
+                                            Pedro Garza García.`}
+                                            />
+                                            {!acceptBox && showErrors && (
+                                                <FormHelperText>
+                                                    Para solicitar una cita es
+                                                    necesario este campo.
+                                                </FormHelperText>
+                                            )}
+                                        </FormControl>
+                                    </div>
+                                </div>
+                                <ReCAPTCHA
+                                    ref={captcha}
+                                    sitekey="6LefMhgpAAAAAGhafQqB6ircUYgMXw_TorkJzi-V"
+                                    onChange={onChange}
+                                />
+                            </div>
+                            <div className="flex justify-center">
+                                <button
+                                    className={`${
+                                        acceptBox && passCaptcha
+                                            ? 'bg-black'
+                                            : 'bg-gray-300'
+                                    } shadow-md rounded-3xl text-white p-3 flex items-center justify-center  md:m-10 mt-5 px-10 md:w-2/6`}
+                                    disabled={!(acceptBox && passCaptcha)}
+                                    onClick={createSolicitud}
+                                >
+                                    ENVIAR
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <DialogInfo
+                    title="Solicitud creada"
+                    onClose={() => {
+                        setConfirmModal(false);
+                        setContenidoModal('');
+                        router.push('/');
+                    }}
+                    content={contenidoModal}
+                    isOpen={confirmModal}
+                />
+            </>
         );
     };
 
