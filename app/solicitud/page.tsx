@@ -38,9 +38,26 @@ export default function Page() {
         { title: 'Proporciona tus datos para iniciar una solicitud' },
     ];
 
-    const onChangePhoneInput = (e: ChangeEvent<HTMLInputElement>) => {};
+    const onChangePhoneInput = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.currentTarget.value.length > 10) return;
 
-    const onChangeNumberInput = (e: ChangeEvent<HTMLInputElement>) => {};
+        // Eliminar cualquier caracter no numérico del número
+        const cleaned = e.currentTarget.value.replace(/\D/g, '');
+
+        // Aplicar la máscara (por ejemplo, con guiones)
+        const formatted = cleaned.replace(
+            /(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/,
+            '$1-$2-$3-$4-$5'
+        );
+        setForm({ ...form, phone: formatted });
+    };
+
+    const onChangeNumberInput = (e: ChangeEvent<HTMLInputElement>) => {
+        let regNums = /^[0-9]+$/;
+
+        if (regNums.test(e.currentTarget.value) || e.currentTarget.value === '')
+            setForm({ ...form, nomina_number: e.currentTarget.value });
+    };
 
     const onChangeTextInput = (e: ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.currentTarget.name]: e.currentTarget.value });
@@ -114,6 +131,7 @@ export default function Page() {
                         <div className="w-full flex flex-col mt-4">
                             <div className="w-full mb-2">
                                 <TextField
+                                    error={showErrors && form.name === ''}
                                     fullWidth
                                     label="Nombre del solicitante"
                                     variant="outlined"
@@ -126,6 +144,9 @@ export default function Page() {
                             </div>
                             <div className="w-full mb-2">
                                 <TextField
+                                    error={
+                                        showErrors && form.nomina_number === ''
+                                    }
                                     fullWidth
                                     label="Número de nómina"
                                     variant="outlined"
@@ -140,6 +161,12 @@ export default function Page() {
                         <div className="w-full flex flex-col justify-between ">
                             <div className="w-full mb-2">
                                 <TextField
+                                    error={
+                                        showErrors &&
+                                        (form.email === '' ||
+                                            !form.email.includes('@') ||
+                                            !form.email.includes('.'))
+                                    }
                                     fullWidth
                                     label="Email"
                                     variant="outlined"
@@ -152,6 +179,7 @@ export default function Page() {
                             </div>
                             <div className="w-full mb-2">
                                 <TextField
+                                    error={showErrors && form.phone === ''}
                                     fullWidth
                                     label="Télefono"
                                     variant="outlined"
@@ -195,7 +223,7 @@ export default function Page() {
                                         ? 'bg-black'
                                         : 'bg-gray-300'
                                 } shadow-md rounded-3xl text-white p-3 flex items-center justify-center  md:m-10 mt-5 px-10 md:w-2/6`}
-                                disabled={!passCaptcha}
+                                disabled={!(acceptBox && passCaptcha)}
                                 onClick={createSolicitud}
                             >
                                 ENVIAR
