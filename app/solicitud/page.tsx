@@ -104,13 +104,12 @@ export default function Page() {
         let MM = ('0' + (currDate.getMonth() + 1)).slice(-2);
         let YYYY = currDate.getFullYear();
 
-        setForm({
+        setIsReqLoading(true);
+        let res = await createRequest({
             ...form,
             hour_request: `${hh}:${mm} `,
-            date_request: `${DD}-${MM}-${YYYY}`,
+            date_request: `${YYYY}-${MM}-${DD}`,
         });
-        setIsReqLoading(true);
-        let res = await createRequest(form);
 
         if (res.status === 200) {
             setAlert('success', res.message || 'Solicitud creada con exito');

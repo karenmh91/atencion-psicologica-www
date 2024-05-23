@@ -19,21 +19,17 @@ export interface CreateRequest {
 export interface Request {
     id: number;
     name: string;
-    nomina_number: string;
+    nomina_number: string | null;
     email: string;
     phone: string;
     motive_appointment: string | null;
-    date_request: Date;
+    date_request: string;
     hour_request: string;
     origin_system: number;
     id_request_status: number;
-    active: boolean;
     id_user_created_by: number | null;
     created_at: string;
-    id_user_edited_by: number | null;
     updated_at: string;
-    resquest_status: RequestStatus | null;
-    appointments: any;
 }
 
 export interface RequestResponse<T> {

@@ -28,21 +28,9 @@ axios.interceptors.response.use(
     }
 );
 
-export const getRequestStatuses = () =>
-    axios
-        .get(`${URL}requestStatus`, { params: { active: true } })
-        .then((response) => response.data)
-        .then((data) => data);
-
-export const getAllRequests = () =>
-    axios
-        .get(`${URL}requests`, { params: { active: true } })
-        .then((reponse) => reponse.data)
-        .then((data) => data);
-
 export const createRequest = (request: CreateRequest) =>
     axios
-        .post(`${URL}requests`, {
+        .post(`${URL}requestsPortal`, {
             name: request.name,
             nomina_number: request.nomina_number,
             email: request.email,
@@ -52,11 +40,12 @@ export const createRequest = (request: CreateRequest) =>
             hour_request: request.hour_request,
             origin_system: request.origin_system,
             id_request_status: request.id_request_status,
-            id_user_created_by: request.id_user_created_by,
         })
         .then((response) => response.data)
         .then((data: RequestResponse<Request>) => data)
         .catch((err): RequestResponse<null> => {
+            console.log(err);
+
             let resError: RequestResponse<null> = {
                 status: err.response.status,
                 message:
@@ -66,15 +55,3 @@ export const createRequest = (request: CreateRequest) =>
 
             return resError;
         });
-
-export const updateRequestStatus = (idRequest: number, idStatus: number) =>
-    axios
-        .put<{ status: number; response: string }>(
-            `${URL}requests/updateStatus`,
-            {
-                id: idRequest,
-                status: idStatus,
-            }
-        )
-        .then((response) => response.data)
-        .then((data) => data);
