@@ -8,7 +8,7 @@ export const Header = () => {
     <div className=" grid grid-cols-3 items-center border-b border-gray-300 ">
       <div className="px-8 invisible md:visible">
           <p className="text-lg">
-            <strong>Sistema Administrador de Atención Psicológica (SIAAP) </strong>
+            <strong>Sistema Administrador de Atención Psicológica (SISAP) </strong>
           </p> 
       </div>
       <div className="p-4 items-center justify-center content-center">
