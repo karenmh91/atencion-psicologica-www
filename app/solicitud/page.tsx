@@ -23,6 +23,7 @@ import useAlertsStore from '@/store/storeAlerts';
 import DialogInfo from '@/components/DialogInfo/DialogInfo';
 
 export default function Page() {
+    const regExEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
     /////Store
     const { setAlert } = useAlertsStore((state) => state);
     /////
@@ -88,8 +89,7 @@ export default function Page() {
             !(acceptBox && passCaptcha) ||
             form.name === '' ||
             form.nomina_number === '' ||
-            form.email === '' ||
-            !form.email.includes('@') ||
+            !regExEmail.test(form.email) ||
             form.phone === ''
         ) {
             setShowErrors(true);
@@ -115,7 +115,7 @@ export default function Page() {
             setAlert('success', res.message || 'Solicitud creada con exito');
             setConfirmModal(true);
             setContenidoModal(
-                `Se ha creado una nueva solicitud con el id ${res.response?.id}`
+                `Se ha creado una nueva solicitud con el id ${('0000' + res.response?.id).slice(-4)}`
             );
         } else {
             if (res.status === 500) {
@@ -218,8 +218,7 @@ export default function Page() {
                                     <TextField
                                         error={
                                             showErrors &&
-                                            (form.email === '' ||
-                                                !form.email.includes('@'))
+                                            !regExEmail.test(form.email)
                                         }
                                         fullWidth
                                         label="Email"
@@ -231,8 +230,7 @@ export default function Page() {
                                         onChange={onChangeTextInput}
                                         helperText={
                                             showErrors &&
-                                            (form.email === '' ||
-                                                !form.email.includes('@'))
+                                            !regExEmail.test(form.email)
                                                 ? 'Debe de ser un email válido.'
                                                 : ''
                                         }
