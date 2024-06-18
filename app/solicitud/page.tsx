@@ -9,6 +9,7 @@ import { Toaster, toast } from 'sonner';
 import ReCAPTCHA from 'react-google-recaptcha';
 import {
     Checkbox,
+    CircularProgress,
     FormControl,
     FormControlLabel,
     FormGroup,
@@ -289,14 +290,23 @@ export default function Page() {
                             <div className="flex justify-center">
                                 <button
                                     className={`${
-                                        acceptBox && passCaptcha
+                                        acceptBox &&
+                                        passCaptcha &&
+                                        !isReqLoading
                                             ? 'bg-black'
                                             : 'bg-gray-300'
                                     } shadow-md rounded-3xl text-white p-3 flex items-center justify-center  md:m-10 mt-5 px-10 md:w-2/6`}
-                                    disabled={!(acceptBox && passCaptcha)}
+                                    disabled={
+                                        !(acceptBox && passCaptcha) ||
+                                        isReqLoading
+                                    }
                                     onClick={createSolicitud}
                                 >
-                                    ENVIAR
+                                    {isReqLoading ? (
+                                        <CircularProgress />
+                                    ) : (
+                                        'ENVIAR'
+                                    )}
                                 </button>
                             </div>
                         </div>
