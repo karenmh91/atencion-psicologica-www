@@ -34,19 +34,7 @@ function NavBar() {
                             >
                                 Iniciar solicitud
                             </Link>
-                        </li>
-                        {/* <li className="inline-block pl-[15px] pr-[13px] cursor:pointer">
-              <Link
-                className={
-                  router == "/seguimiento"
-                    ? "text-[#000]"
-                    : "text-[#999999] hover:text-[#000]"
-                }
-                href="/seguimiento"
-              >
-                Seguimiento
-              </Link>
-            </li> */}
+                        </li> 
                     </ul>
                 </div>
             </div>

@@ -157,10 +157,10 @@ export default function Home() {
                             </div>
                             <div className="mb-20 md:mb-0 step-2 relative z-10 grid place-items-center w-10 h-10 rounded-full font-bold transition-all duration-300 bg-gray-900 text-white">
                                 2
-                                <div className="absolute -bottom-[3.5rem] w-[325px] text-center">
+                                <div className="absolute -bottom-[3.5rem] w-max text-center">
                                     <p className="text-black antialiased font-sans text-base leading-relaxed text-blue-gray-900 font-normal">
-                                        Recibe correo de solicitud de cita, y
-                                        espera de 1-2 días con los datos de la
+                                        Obtén tu folio de solicitud de cita y <br /> 
+                                        espera de 1-2 días un correo con los datos de la  
                                         cita asignada
                                     </p>
                                 </div>

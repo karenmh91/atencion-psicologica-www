@@ -116,7 +116,7 @@ export default function Page() {
             setAlert('success', res.message || 'Solicitud creada con exito');
             setConfirmModal(true);
             setContenidoModal(
-                `Se ha creado una nueva solicitud con el folio ${('0000' + res.response?.id).slice(-4)}`
+                `Se ha creado una nueva solicitud con el folio ${('0000' + res.response?.id).slice(-4)}. Espere un correo electrónico de 1-2 días hábiles, con los datos de la cita asignada. `
             );
         } else {
             if (res.status === 500) {
